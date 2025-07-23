@@ -1,0 +1,8 @@
+#!/usr/bin/env node
+
+/**
+ * Asset CLI Binary
+ * Entry point for the asset command
+ */
+
+require('../src/index.js');
