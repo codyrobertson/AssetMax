@@ -61,6 +61,24 @@ assetmax build [options]
   --force                    Force regeneration
 ```
 
+### Model Commands
+
+```bash
+# List all available AI models
+assetmax list
+
+# Model management
+assetmax model list                    # Same as assetmax list
+assetmax model help <model>            # Detailed model information
+assetmax model cost <model> <count>    # Calculate generation costs
+assetmax model params <model>          # Show model parameters
+
+# Examples
+assetmax model help flux-schnell       # Get info about FLUX Schnell
+assetmax model cost recraft-v3 10      # Cost for 10 assets with Recraft V3
+assetmax model params ideogram-v3-turbo # Show supported parameters
+```
+
 ### Template Commands
 
 ```bash
@@ -86,7 +104,23 @@ assetmax generate-manifest [options]
 
 ## Multi-Model System
 
-AssetMax supports 9 AI models with automatic cost optimization:
+AssetMax supports 9 AI models with automatic cost optimization.
+
+### Model Discovery
+
+```bash
+# List all available models with costs
+assetmax list
+
+# Get detailed info about a specific model
+assetmax model help flux-schnell
+
+# Check model parameters and supported formats
+assetmax model params recraft-v3
+
+# Calculate costs before generating
+assetmax model cost seedream-3 5
+```
 
 ### Available Models
 
@@ -106,6 +140,33 @@ recraft-v3-svg       # $0.08  - Vector graphics/logos
 
 # High-end
 stable-diffusion-3.5-large  # $0.065 - Premium quality
+```
+
+### Example Model Discovery
+
+```bash
+assetmax list
+```
+
+Output:
+```
+🤖 Available AI Models
+
+📋 Fastest Models:
+   FLUX Schnell              $0.003 - Fastest FLUX variant optimized for speed
+
+📋 Economical Models:
+   Imagen 4 Fast             $0.020 - Google's fast model
+   Seedream 3                $0.030 - Best overall with text rendering
+   Ideogram V3 Turbo         $0.030 - Best for text-heavy assets
+
+📋 Premium Models:
+   FLUX 1.1 Pro              $0.040 - Premium FLUX quality
+   Recraft V3                $0.040 - Best for brand assets
+
+📋 Specialized Models:
+   Recraft V3 SVG            $0.080 - Vector graphics/logos
+   Stable Diffusion 3.5      $0.065 - Premium quality
 ```
 
 ### Cost Optimization Example

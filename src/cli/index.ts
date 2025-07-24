@@ -153,6 +153,188 @@ program
     }
   });
 
+// List available models
+program
+  .command('list')
+  .description('List all available AI models')
+  .action(async () => {
+    try {
+      const { getAllModels } = await import('../models/model-registry.js');
+      const allModels = getAllModels();
+      
+      console.log('🤖 Available AI Models\n');
+      
+      // Group by category for better display
+      const categories = {
+        fastest: allModels.filter(m => m.costPerImage <= 0.01),
+        economical: allModels.filter(m => m.costPerImage > 0.01 && m.costPerImage <= 0.03),
+        premium: allModels.filter(m => m.costPerImage > 0.03 && m.costPerImage <= 0.05),
+        specialized: allModels.filter(m => m.costPerImage > 0.05)
+      };
+      
+      for (const [category, models] of Object.entries(categories)) {
+        if (models.length === 0) continue;
+        
+        console.log(`📋 ${category.charAt(0).toUpperCase() + category.slice(1)} Models:`);
+        for (const model of models) {
+          console.log(`   ${model.name.padEnd(25)} $${model.costPerImage.toFixed(3).padStart(5)} - ${model.description}`);
+        }
+        console.log('');
+      }
+      
+      console.log('💡 Use "assetmax model help <model-name>" for detailed information');
+    } catch (error) {
+      console.error('❌ Failed to list models:', (error as Error).message);
+      process.exit(1);
+    }
+  });
+
+// Model management commands
+program
+  .command('model')
+  .description('AI model information and management')
+  .addCommand(
+    new Command('list')
+      .description('List all available models')
+      .action(async () => {
+        // Redirect to main list command
+        await program.parseAsync(['node', 'assetmax', 'list']);
+      })
+  )
+  .addCommand(
+    new Command('help')
+      .description('Get detailed information about a model')
+      .argument('<model>', 'Model name (e.g., flux-schnell, recraft-v3)')
+      .action(async (modelName) => {
+        try {
+          const { getModelConfig } = await import('../models/model-registry.js');
+          const model = getModelConfig(modelName);
+          
+          console.log(`🤖 ${model.name}\n`);
+          console.log(`Provider: ${model.provider}`);
+          console.log(`Description: ${model.description}`);
+          console.log(`Cost per image: $${model.costPerImage}`);
+          console.log(`Replicate model: ${model.replicateModel}\n`);
+          
+          console.log('📐 Supported aspect ratios:');
+          console.log(`   ${model.supportedAspectRatios.join(', ')}\n`);
+          
+          console.log('📄 Supported formats:');
+          console.log(`   ${model.supportedFormats.join(', ')}\n`);
+          
+          console.log('⚡ Special features:');
+          model.specialFeatures.forEach(feature => console.log(`   • ${feature}`));
+          console.log('');
+          
+          console.log('🎯 Best use cases:');
+          model.useCase.forEach(useCase => console.log(`   • ${useCase}`));
+          console.log('');
+          
+          console.log('⚙️ Default parameters:');
+          for (const [key, value] of Object.entries(model.defaultParams)) {
+            console.log(`   ${key}: ${JSON.stringify(value)}`);
+          }
+        } catch (error) {
+          console.error('❌ Model not found:', (error as Error).message);
+          console.log('\n💡 Use "assetmax list" to see available models');
+          process.exit(1);
+        }
+      })
+  )
+  .addCommand(
+    new Command('cost')
+      .description('Calculate cost for generating assets')
+      .argument('<model>', 'Model name')
+      .argument('<count>', 'Number of assets')
+      .action(async (modelName, count) => {
+        try {
+          const { getModelConfig } = await import('../models/model-registry.js');
+          const model = getModelConfig(modelName);
+          const assetCount = parseInt(count);
+          
+          if (isNaN(assetCount) || assetCount <= 0) {
+            throw new Error('Asset count must be a positive number');
+          }
+          
+          const totalCost = model.costPerImage * assetCount;
+          
+          console.log(`💰 Cost Calculation\n`);
+          console.log(`Model: ${model.name}`);
+          console.log(`Cost per asset: $${model.costPerImage}`);
+          console.log(`Number of assets: ${assetCount}`);
+          console.log(`Total cost: $${totalCost.toFixed(3)}`);
+          
+          // Show cost comparison
+          if (assetCount > 1) {
+            console.log(`\nAverage cost per asset: $${(totalCost / assetCount).toFixed(3)}`);
+          }
+        } catch (error) {
+          console.error('❌ Cost calculation failed:', (error as Error).message);
+          process.exit(1);
+        }
+      })
+  )
+  .addCommand(
+    new Command('params')
+      .description('Show supported parameters for a model')
+      .argument('<model>', 'Model name')
+      .action(async (modelName) => {
+        try {
+          const { getModelConfig } = await import('../models/model-registry.js');
+          const model = getModelConfig(modelName);
+          
+          console.log(`⚙️ ${model.name} Parameters\n`);
+          
+          console.log('📐 Aspect ratios:');
+          model.supportedAspectRatios.forEach(ratio => console.log(`   ${ratio}`));
+          console.log('');
+          
+          console.log('📄 Output formats:');
+          model.supportedFormats.forEach(format => console.log(`   ${format}`));
+          console.log('');
+          
+          console.log('🔧 Default parameters:');
+          for (const [key, value] of Object.entries(model.defaultParams)) {
+            console.log(`   ${key}: ${JSON.stringify(value)}`);
+          }
+          console.log('');
+          
+          // Provider-specific parameters
+          console.log('📋 Provider-specific options:');
+          switch (model.provider) {
+            case 'Black Forest Labs':
+              console.log('   • guidance: Control prompt adherence (1-10)');
+              console.log('   • steps: Number of inference steps');
+              console.log('   • width/height: Custom dimensions (FLUX Pro only)');
+              break;
+            case 'Google':
+              console.log('   • safety_filter_level: Content filtering level');
+              break;
+            case 'ByteDance':
+              console.log('   • size: Image size preset (small, regular, big)');
+              console.log('   • guidance_scale: Prompt adherence control');
+              break;
+            case 'Ideogram AI':
+              console.log('   • style: Visual style (Auto, Realistic, Design)');
+              console.log('   • magic_prompt: Automatic prompt enhancement');
+              break;
+            case 'Recraft AI':
+              console.log('   • style: Art style selection');
+              console.log('   • size: Custom dimensions as WxH');
+              break;
+            case 'Stability AI':
+              console.log('   • cfg: Classifier-free guidance scale');
+              console.log('   • steps: Diffusion steps');
+              console.log('   • prompt_strength: Prompt influence');
+              break;
+          }
+        } catch (error) {
+          console.error('❌ Failed to show parameters:', (error as Error).message);
+          process.exit(1);
+        }
+      })
+  );
+
 // Add template commands
 program
   .command('template')
