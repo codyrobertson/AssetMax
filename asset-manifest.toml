@@ -1,0 +1,160 @@
+[meta]
+name = "AssetMax Core"
+version = "1.0.0"
+description = "Manifest-driven asset management system with contract-based generation"
+base_url = "/assets"
+
+[categories.branding]
+path = "branding"
+type = "image"
+formats = ["png", "svg"]
+
+[categories.social]
+path = "social"
+type = "image"
+formats = ["png", "jpg"]
+
+[categories.documentation]
+path = "docs"
+type = "image"
+formats = ["png", "jpg"]
+
+[build]
+output_dir = "assets"
+output_file = "generated-assets.ts"
+type_definitions = true
+fallback_image = "/fallback.png"
+
+[cli]
+output_dir = "generated"
+
+[cli.models]
+flux-kontext = "flux-kontext"
+
+[cli.pricing]
+flux-kontext = 0.05
+
+[generation]
+skip_existing = true
+convert_formats = false
+verify_output = true
+max_retries = 3
+
+# Brand Assets
+[assets.logos]
+description = "AssetMax brand logos and wordmarks"
+category = "branding"
+format = "png"
+generation_model = "flux-kontext"
+aspect_ratio = "1:1"
+
+[assets.logos.primary_logo]
+prompt = "Modern, clean logo for AssetMax - a minimalist geometric 'A' symbol with interconnected nodes representing asset management, professional tech branding, gradient blue to purple, white background"
+alt = "AssetMax primary logo"
+aspect_ratio = "1:1"
+
+[assets.logos.wordmark]
+prompt = "AssetMax wordmark logo - clean, modern typography with 'AssetMax' text, tech startup style, bold sans-serif font, gradient blue to purple accent, white background"
+alt = "AssetMax wordmark logo"
+aspect_ratio = "21:9"
+
+[assets.logos.icon_only]
+prompt = "AssetMax app icon - simplified geometric 'A' symbol with connected nodes, modern flat design, gradient blue to purple, suitable for favicons and app stores"
+alt = "AssetMax app icon"
+aspect_ratio = "1:1"
+
+# Social Media Assets
+[assets.social_cards]
+description = "Open Graph and social media cards"
+category = "social"
+format = "png"
+generation_model = "flux-kontext"
+aspect_ratio = "16:9"
+
+[assets.social_cards.og_primary]
+prompt = "Open Graph card for AssetMax - modern tech design with 'Manifest-driven asset management' tagline, clean layout with AssetMax logo, gradient background blue to purple, code snippets overlay, 1200x630px"
+alt = "AssetMax Open Graph card"
+aspect_ratio = "1:1"
+
+[assets.social_cards.twitter_card]
+prompt = "Twitter card for AssetMax - sleek design showcasing 'AI-powered asset generation' with terminal/CLI interface preview, dark theme with purple accents, AssetMax branding"
+alt = "AssetMax Twitter card"
+aspect_ratio = "1:1"
+
+[assets.social_cards.linkedin_card]
+prompt = "LinkedIn card for AssetMax - professional design highlighting 'Enterprise asset management solution', clean corporate style with screenshots of TypeScript code generation, blue professional theme"
+alt = "AssetMax LinkedIn card"
+aspect_ratio = "1:1"
+
+# Documentation Assets
+[assets.github_assets]
+description = "GitHub README and documentation images"
+category = "documentation"
+format = "png"
+generation_model = "flux-kontext"
+
+[assets.github_assets.hero_banner]
+prompt = "GitHub README hero banner for AssetMax - wide banner showing 'Manifest-driven Asset Management' with code snippets, CLI interface, and generated assets preview, modern developer tool aesthetic"
+alt = "AssetMax GitHub hero banner"
+aspect_ratio = "21:9"
+
+[assets.github_assets.architecture_diagram]
+prompt = "Technical architecture diagram for AssetMax - clean flowchart showing TOML manifest → TypeScript compilation → AI generation → Asset output, modern diagram style with icons and arrows"
+alt = "AssetMax architecture diagram"
+aspect_ratio = "1:1"
+
+[assets.github_assets.cli_demo]
+prompt = "CLI demo screenshot for AssetMax - terminal interface showing 'assetmax generate' command in action with colorful output, progress indicators, and generated file list, dark terminal theme"
+alt = "AssetMax CLI demo"
+aspect_ratio = "1:1"
+
+[assets.github_assets.workflow_illustration]
+prompt = "Developer workflow illustration - developer using AssetMax to generate assets from manifest files, modern isometric style illustration, person at computer with floating asset files"
+alt = "AssetMax workflow illustration"
+aspect_ratio = "4:3"
+
+# Feature Highlights
+[assets.features]
+description = "Feature highlight graphics"
+category = "documentation"
+format = "png"
+generation_model = "flux-kontext"
+aspect_ratio = "16:9"
+
+[assets.features.ai_generation]
+prompt = "AI generation feature highlight - split screen showing text prompt on left and generated image on right, with 'AI-Powered Generation' title, modern UI design"
+alt = "AI generation feature"
+aspect_ratio = "1:1"
+
+[assets.features.typescript_support]
+prompt = "TypeScript integration feature - code editor showing TypeScript asset definitions with IntelliSense autocomplete, 'Type-Safe Assets' title, VS Code theme"
+alt = "TypeScript support feature"
+aspect_ratio = "1:1"
+
+[assets.features.manifest_driven]
+prompt = "Manifest-driven workflow - TOML file with asset definitions connected by arrows to generated files, 'Configuration as Code' title, clean technical diagram"
+alt = "Manifest-driven workflow"
+aspect_ratio = "1:1"
+
+# Additional Branding
+[assets.badges]
+description = "Project badges and shields"
+category = "branding"
+format = "png"
+generation_model = "flux-kontext"
+aspect_ratio = "21:9"
+
+[assets.badges.version_badge]
+prompt = "npm version badge for AssetMax - clean shield design showing 'AssetMax v1.0.0', npm package style, red npm colors"
+alt = "AssetMax version badge"
+aspect_ratio = "21:9"
+
+[assets.badges.build_status]
+prompt = "Build status badge - green 'Build: Passing' shield with checkmark icon, GitHub Actions style, clean and professional"
+alt = "Build status badge"
+aspect_ratio = "21:9"
+
+[assets.badges.coverage_badge]
+prompt = "Test coverage badge - blue '100% Coverage' shield with test tube icon, clean shield design matching standard badge style"
+alt = "Test coverage badge"
+aspect_ratio = "21:9"

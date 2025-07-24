@@ -1,7 +1,7 @@
 import typescript from '@rollup/plugin-typescript';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
-import { terser } from 'rollup-plugin-terser';
+import terser from '@rollup/plugin-terser';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -53,6 +53,7 @@ export default [
       typescript({
         tsconfig: './tsconfig.json',
         declaration: false,
+        outDir: undefined,
       }),
       isProduction && terser(),
     ].filter(Boolean),
@@ -75,10 +76,11 @@ export default [
   {
     input: 'src/cli/index.ts',
     output: {
-      file: 'dist/cli/index.js',
+      dir: 'dist/cli',
       format: 'cjs',
       sourcemap: true,
       banner: '#!/usr/bin/env node',
+      entryFileNames: 'index.js',
     },
     plugins: [
       nodeResolve({ preferBuiltins: true }),
@@ -86,6 +88,7 @@ export default [
       typescript({
         tsconfig: './tsconfig.json',
         declaration: false,
+        outDir: undefined,
       }),
       isProduction && terser(),
     ].filter(Boolean),

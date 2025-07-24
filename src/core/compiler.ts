@@ -29,7 +29,7 @@ export class AssetCompiler {
     }
     
     const content = await fs.readFile(manifestPath, 'utf-8');
-    this.manifest = toml.parse(content) as AssetManifest;
+    this.manifest = toml.parse(content) as unknown as AssetManifest;
     
     console.log(`📋 Loaded manifest: ${this.manifest.meta.name} v${this.manifest.meta.version}`);
   }
@@ -187,7 +187,7 @@ export class AssetCompiler {
   private countAssets(): number {
     let count = 0;
     for (const groupConfig of Object.values(this.manifest!.assets)) {
-      for (const [key, value] of Object.entries(groupConfig)) {
+      for (const [, value] of Object.entries(groupConfig)) {
         if (typeof value === 'object' && 'prompt' in value) {
           count++;
         }

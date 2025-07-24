@@ -70,7 +70,7 @@ describe('ManifestValidator', () => {
 
       (fs.access as jest.Mock).mockResolvedValue(true);
       (fs.readFile as jest.Mock).mockResolvedValue('mock toml content');
-      (toml.parse as jest.Mock).mockReturnValue(validManifest);
+      (toml.parse as unknown as jest.Mock).mockReturnValue(validManifest);
 
       const result = await validator.validate();
 
@@ -91,7 +91,7 @@ describe('ManifestValidator', () => {
 
       (fs.access as jest.Mock).mockResolvedValue(true);
       (fs.readFile as jest.Mock).mockResolvedValue('mock toml content');
-      (toml.parse as jest.Mock).mockReturnValue(invalidManifest);
+      (toml.parse as unknown as jest.Mock).mockReturnValue(invalidManifest);
 
       const result = await validator.validate();
 
@@ -128,7 +128,7 @@ describe('ManifestValidator', () => {
 
       (fs.access as jest.Mock).mockResolvedValue(true);
       (fs.readFile as jest.Mock).mockResolvedValue('mock toml content');
-      (toml.parse as jest.Mock).mockReturnValue(manifestWithInvalidAssets);
+      (toml.parse as unknown as jest.Mock).mockReturnValue(manifestWithInvalidAssets);
 
       const result = await validator.validate();
 

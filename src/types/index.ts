@@ -74,7 +74,7 @@ export interface BuildConfig {
 
 export interface CLIConfig {
   models: Record<string, GenerationModel>;
-  pricing: Record<GenerationModel, number>;
+  pricing: Record<string, number>; // More flexible to allow any model string
   output_dir: string;
 }
 
@@ -160,7 +160,7 @@ export interface AssetInfo {
   path: string;
   extension: string;
   category: string;
-  subcategory?: string;
+  subcategory?: string | undefined;
   estimatedPrompt: string;
   altText: string;
 }

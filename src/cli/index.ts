@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 /**
  * AssetMax CLI
  * Project scaffolding and asset management CLI
@@ -39,7 +37,7 @@ program
       });
       console.log('🎉 AssetMax initialized successfully!');
     } catch (error) {
-      console.error('❌ Initialization failed:', error.message);
+      console.error('❌ Initialization failed:', (error as Error).message);
       process.exit(1);
     }
   });
@@ -63,7 +61,7 @@ program
         outputFile: options.output
       });
     } catch (error) {
-      console.error('❌ Manifest generation failed:', error.message);
+      console.error('❌ Manifest generation failed:', (error as Error).message);
       process.exit(1);
     }
   });
@@ -80,7 +78,7 @@ program
       await compiler.compile(options.input, options.output);
       console.log('✅ Compilation complete');
     } catch (error) {
-      console.error('❌ Compilation failed:', error.message);
+      console.error('❌ Compilation failed:', (error as Error).message);
       process.exit(1);
     }
   });
@@ -101,7 +99,7 @@ program
         force: options.force
       });
     } catch (error) {
-      console.error('❌ Asset generation failed:', error.message);
+      console.error('❌ Asset generation failed:', (error as Error).message);
       process.exit(1);
     }
   });
@@ -134,7 +132,7 @@ program
       
       console.log('\n🎉 Build pipeline complete!');
     } catch (error) {
-      console.error('❌ Build failed:', error.message);
+      console.error('❌ Build failed:', (error as Error).message);
       process.exit(1);
     }
   });
@@ -150,7 +148,7 @@ program
       const validator = new ManifestValidator();
       await validator.validate(options.input);
     } catch (error) {
-      console.error('❌ Validation failed:', error.message);
+      console.error('❌ Validation failed:', (error as Error).message);
       process.exit(1);
     }
   });
@@ -181,7 +179,7 @@ program
             projectName: options.name || path.basename(process.cwd())
           });
         } catch (error) {
-          console.error('❌ Template creation failed:', error.message);
+          console.error('❌ Template creation failed:', (error as Error).message);
           process.exit(1);
         }
       })

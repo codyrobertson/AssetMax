@@ -56,7 +56,7 @@ describe('AssetCompiler', () => {
 
       (fs.access as jest.Mock).mockResolvedValue(true);
       (fs.readFile as jest.Mock).mockResolvedValue('mock toml content');
-      (toml.parse as jest.Mock).mockReturnValue(mockManifest);
+      (toml.parse as unknown as jest.Mock).mockReturnValue(mockManifest);
       (fs.mkdir as jest.Mock).mockResolvedValue(undefined);
       (fs.writeFile as jest.Mock).mockResolvedValue(undefined);
 

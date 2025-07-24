@@ -49,7 +49,7 @@ export class VeoModel {
     }
 
     // Prepare model inputs
-    const modelInput: any = {
+    const modelInput: Record<string, unknown> = {
       prompt,
       aspect_ratio: aspectRatio,
       duration
@@ -68,7 +68,7 @@ export class VeoModel {
       if (Array.isArray(output)) {
         outputUrl = output[0] as string;
       } else {
-        outputUrl = output as string;
+        outputUrl = output as unknown as string;
       }
 
       if (!outputUrl) {
@@ -77,7 +77,7 @@ export class VeoModel {
 
       return outputUrl;
     } catch (error) {
-      throw new Error(`Model execution failed: ${error.message}`);
+      throw new Error(`Model execution failed: ${(error as Error).message}`);
     }
   }
 
