@@ -29,10 +29,21 @@ fallback_image = "/fallback.png"
 output_dir = "generated"
 
 [cli.models]
-flux-kontext = "flux-kontext"
+# Fast and economical models
+flux-schnell = "flux-schnell"
+imagen-4-fast = "imagen-4-fast"
 
-[cli.pricing]
-flux-kontext = 0.05
+# Best quality models  
+seedream-3 = "seedream-3"
+flux-pro = "flux-pro"
+
+# Specialized models
+ideogram-v3-turbo = "ideogram-v3-turbo"  # Best for text
+recraft-v3-svg = "recraft-v3-svg"        # Best for SVGs/logos
+recraft-v3 = "recraft-v3"               # Best overall brand assets
+
+# Legacy
+flux-kontext = "flux-pro"
 
 [generation]
 skip_existing = true
@@ -45,7 +56,7 @@ max_retries = 3
 description = "AssetMax brand logos and wordmarks"
 category = "branding"
 format = "png"
-generation_model = "flux-kontext"
+generation_model = "recraft-v3"
 aspect_ratio = "1:1"
 
 [assets.logos.primary_logo]
@@ -68,7 +79,7 @@ aspect_ratio = "1:1"
 description = "Open Graph and social media cards"
 category = "social"
 format = "png"
-generation_model = "flux-kontext"
+generation_model = "seedream-3"
 aspect_ratio = "16:9"
 
 [assets.social_cards.og_primary]
@@ -91,7 +102,7 @@ aspect_ratio = "1:1"
 description = "GitHub README and documentation images"
 category = "documentation"
 format = "png"
-generation_model = "flux-kontext"
+generation_model = "flux-pro"
 
 [assets.github_assets.hero_banner]
 prompt = "GitHub README hero banner for AssetMax - wide banner showing 'Manifest-driven Asset Management' with code snippets, CLI interface, and generated assets preview, modern developer tool aesthetic"
@@ -118,7 +129,7 @@ aspect_ratio = "4:3"
 description = "Feature highlight graphics"
 category = "documentation"
 format = "png"
-generation_model = "flux-kontext"
+generation_model = "ideogram-v3-turbo"
 aspect_ratio = "16:9"
 
 [assets.features.ai_generation]
@@ -141,7 +152,7 @@ aspect_ratio = "1:1"
 description = "Project badges and shields"
 category = "branding"
 format = "png"
-generation_model = "flux-kontext"
+generation_model = "flux-schnell"
 aspect_ratio = "21:9"
 
 [assets.badges.version_badge]

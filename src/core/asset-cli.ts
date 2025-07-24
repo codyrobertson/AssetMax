@@ -8,8 +8,8 @@ import * as path from 'path';
 import * as toml from '@iarna/toml';
 import chalk from 'chalk';
 import ora from 'ora';
-import { FluxModel } from '../models/flux.js';
-import { VeoModel } from '../models/veo.js';
+import { UniversalImageGenerator } from '../models/universal-generator.js';
+import { ModelName, getModelConfig, getAllModels } from '../models/model-registry.js';
 import type { 
   AssetManifest, 
   GenerationOptions, 
@@ -19,13 +19,17 @@ import type {
 
 export class AssetCLI {
   private manifest: AssetManifest | null = null;
-  private models: Map<string, FluxModel | VeoModel> = new Map();
+  private generator: UniversalImageGenerator;
   private progress: GenerationProgress = {
     total: 0,
     completed: 0,
     failed: 0,
     totalCost: 0
   };
+
+  constructor() {
+    this.generator = new UniversalImageGenerator();
+  }
 
   async run(options: GenerationOptions = {}): Promise<void> {
     const manifestFile = options.manifestFile || 'asset-manifest.toml';
@@ -63,19 +67,20 @@ export class AssetCLI {
   }
 
   private async initModels(): Promise<void> {
-    // Initialize AI models based on manifest configuration
-    try {
-      this.models.set('flux-kontext', new FluxModel());
-      console.log('✅ Flux Kontext Pro model initialized');
-    } catch (error) {
-      console.warn('⚠️  Flux model unavailable:', (error as Error).message);
+    // Check if API token is available
+    if (!process.env.REPLICATE_API_TOKEN) {
+      console.warn('⚠️  REPLICATE_API_TOKEN environment variable is required');
+      return;
     }
+
+    // List available models
+    const allModels = getAllModels();
+    console.log(`✅ ${allModels.length} image generation models available`);
     
-    try {
-      this.models.set('veo-3-fast', new VeoModel());
-      console.log('✅ Veo 3 Fast model initialized');
-    } catch (error) {
-      console.warn('⚠️  Veo model unavailable:', (error as Error).message);
+    // Show model categories for user reference
+    const fastest = allModels.filter(m => m.costPerImage <= 0.01);
+    if (fastest.length > 0) {
+      console.log(`⚡ Fastest/cheapest: ${fastest.map(m => m.name).join(', ')}`);
     }
   }
 
@@ -108,7 +113,13 @@ export class AssetCLI {
               model,
               aspectRatio: assetConfig.aspect_ratio || groupConfig.aspect_ratio || '1:1',
               format,
-              cost: this.manifest?.cli?.pricing?.[model] || 0
+              cost: (() => {
+                try {
+                  return getModelConfig(model as ModelName).costPerImage;
+                } catch {
+                  return this.manifest?.cli?.pricing?.[model] || 0;
+                }
+              })()
             });
           }
         }
@@ -133,7 +144,13 @@ export class AssetCLI {
     console.log(`   Models:`);
     
     for (const [model, count] of Object.entries(modelCounts)) {
-      const modelCost = count * (this.manifest!.cli.pricing[model] || 0);
+      let unitCost = 0;
+      try {
+        unitCost = getModelConfig(model as ModelName).costPerImage;
+      } catch {
+        unitCost = this.manifest?.cli?.pricing?.[model] || 0;
+      }
+      const modelCost = count * unitCost;
       console.log(`     ${model}: ${count} assets ($${modelCost.toFixed(3)})`);
     }
     
@@ -172,54 +189,32 @@ export class AssetCLI {
   }
 
   private async generateSingleAsset(asset: AssetToGenerate): Promise<GenerationResult> {
-    const model = this.models.get(asset.model);
-    if (!model) {
-      return {
-        success: false,
-        assetPath: asset.outputPath,
-        cost: 0,
-        duration: 0,
-        error: `Model ${asset.model} not available`
-      };
-    }
-    
     const startTime = Date.now();
     
     try {
       // Ensure output directory exists
       await fs.mkdir(path.dirname(asset.outputPath), { recursive: true });
       
-      // Generate asset
-      let outputUrl: string;
-      if (asset.model.includes('veo')) {
-        // Video generation
-        outputUrl = await model.generate({
-          prompt: asset.prompt,
-          aspectRatio: asset.aspectRatio
-        });
-      } else {
-        // Image generation
-        outputUrl = await model.generate({
-          prompt: asset.prompt,
-          aspectRatio: asset.aspectRatio,
-          outputFormat: asset.format === 'png' ? 'png' : 'jpg'
-        });
-      }
+      // Get model configuration
+      const modelConfig = getModelConfig(asset.model as ModelName);
+      
+      // Generate asset using universal generator
+      const result = await this.generator.generate({
+        prompt: asset.prompt,
+        model: asset.model as ModelName,
+        aspectRatio: asset.aspectRatio,
+        outputFormat: asset.format === 'png' ? 'png' : 'jpg'
+      });
       
       // Download generated asset
-      await this.downloadAsset(outputUrl, asset.outputPath);
-      
-      // Convert format if needed
-      if (asset.format === 'png' && path.extname(asset.outputPath) !== '.png') {
-        await this.convertToPng(asset.outputPath);
-      }
+      await this.downloadAsset(result.url, asset.outputPath);
       
       const duration = Date.now() - startTime;
       
       return {
         success: true,
         assetPath: asset.outputPath,
-        cost: asset.cost,
+        cost: result.cost,
         duration
       };
     } catch (error) {
