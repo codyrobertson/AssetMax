@@ -1,6 +1,6 @@
 {
   "name": "assetmax",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Manifest-driven asset management system with contract-based generation",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
@@ -28,7 +28,9 @@
     "dist/",
     "templates/",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "!dist/**/*.map",
+    "!dist/**/*.tsbuildinfo"
   ],
   "keywords": [
     "assets",
@@ -61,8 +63,10 @@
   },
   "dependencies": {
     "@iarna/toml": "^2.0.2",
+    "@types/cli-progress": "^3.11.6",
     "axios": "^1.6.2",
     "chalk": "^4.1.2",
+    "cli-progress": "^3.12.0",
     "commander": "^12.0.0",
     "dotenv": "^16.3.1",
     "form-data": "^4.0.0",

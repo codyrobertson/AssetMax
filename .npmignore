@@ -1,0 +1,60 @@
+# Source files - only include dist/
+src/
+tsconfig.json
+rollup.config.js
+
+# Generated assets and media files
+generated/
+assets/
+placeholders/
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+*.webp
+
+# Cache and temporary files
+.rollup.cache/
+node_modules/
+.env*
+*.log
+
+# Test files
+tests/
+__tests__/
+*.test.ts
+*.test.js
+*.spec.ts
+*.spec.js
+coverage/
+
+# Development files
+.claude/
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Git and CI files
+.git/
+.gitignore
+.github/
+
+# Documentation source (keep only README.md)
+docs/
+CHANGELOG.md
+CONTRIBUTING.md
+
+# Examples and demos
+examples/
+demo/
+sample/
+
+# Build artifacts not needed in package
+*.tsbuildinfo
+*.map
+
+# OS files
+.DS_Store
+Thumbs.db
